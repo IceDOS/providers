@@ -12,5 +12,13 @@
       inputs.jovian.nixosModules.default
     ];
 
-  meta.name = "jovian";
+  meta = {
+    name = "jovian";
+
+    dependencies = [
+      {
+        modules = [ "chaotic" ];
+      }
+    ];
+  };
 }
