@@ -3,7 +3,8 @@
 {
   inputs.jovian = {
     override = true;
-    follows = "chaotic/jovian";
+    url = "github:jovian-experiments/jovian-nixos";
+    inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs.nixosModules =
@@ -12,13 +13,5 @@
       inputs.jovian.nixosModules.default
     ];
 
-  meta = {
-    name = "jovian";
-
-    dependencies = [
-      {
-        modules = [ "chaotic" ];
-      }
-    ];
-  };
+  meta.name = "jovian";
 }
