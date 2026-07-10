@@ -7,11 +7,5 @@
     inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs.nixosModules =
-    { inputs, ... }:
-    [
-      inputs.jovian.nixosModules.default
-    ];
-
   meta.name = "jovian";
 }
