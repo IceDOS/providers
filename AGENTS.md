@@ -25,11 +25,16 @@ options); `flake.nix` exposes them via
 `icedosLib.scanModules { path = ./modules; filename = "icedos.nix"; }`.
 
 ## Module shape here
-Input-only provider modules. Each declares a single `inputs.<name>` flake input
-(`override = true`, so the generated state flake carries it under the stable name
-`<name>`), which is then visible to every enabled module's `outputs.nixosModules`
-under that name. Loading the upstream's own NixOS module / overlay is the consumer's
-decision.
+Input-only provider modules. Each declares a single `inputs.<name>` flake input, which
+is then visible to every enabled module's `outputs.nixosModules` under the bare name
+`<name>`. The generated state flake namespaces the input to its declaring module —
+top-level name `icedos-github_icedos_providers-<module>-<name>` — and consumers
+needing that top-level name in a string context (e.g. `follows`) compute it via
+`icedosLib.moduleInputName { repo = "github:icedos/providers"; module = "<module>"; input = "<name>"; }`.
+Loading the upstream's own NixOS module / overlay is the consumer's decision.
+If a module ever gains a `patches` list, its inputs split into an unpatched
+`<input>_source` node plus a patched node — compute the `_source` name with
+`moduleInputName` using `input = "<name>_source"`.
 
 ## Test a change to this repo
 This repo is only pulled via consumers' `meta.dependencies`, so it has no entry in the
@@ -57,6 +62,7 @@ the build delete `.local.toml` and restore the lock (or `git restore config/.sta
   SteamOS-style); do not load `jovian.nixosModules.default` here by default (it sets
   `allowUnfree = true` and SteamOS services). Consumers: `hardware#steamdeck`,
   `apps#steam` (`os-session`, `sunshine-headless-session`), `kde#foreground-booster`.
-- A module's declared input name is visible to all enabled modules under that name;
-  `override` only controls the top-level flake input name. Two modules declaring the
-  same input name collide in the masked input set regardless of `override`.
+- A module's declared input name is visible to all enabled modules under that name; the
+  top-level flake input name is derived from the declaring module via
+  `icedosLib.moduleInputName`. Two modules declaring the same input name collide in the
+  masked input set regardless of the top-level name.
