@@ -16,8 +16,9 @@
 
 ## Purpose
 Extra package/source providers — flake `inputs` for upstream Nix sources that other
-repos' modules build on top of. Nothing here applies `nixpkgs.overlays` or loads NixOS
-modules itself; consumers decide what to load.
+repos' modules build on top of. Nothing here applies `nixpkgs.overlays` or loads an
+upstream's NixOS modules; consumers decide what to load. The only NixOS config a
+module here sets is its own `icedos.system.tips.list`.
 
 ## Layout
 `modules/{jovian,nur}/icedos.nix` (no `config.toml` — these modules declare no
@@ -25,11 +26,12 @@ options); `flake.nix` exposes them via
 `icedosLib.scanModules { path = ./modules; filename = "icedos.nix"; }`.
 
 ## Module shape here
-Input-only provider modules. Each declares a single `inputs.<name>` flake input, which
-is then visible to every enabled module's `outputs.nixosModules` under the bare name
-`<name>`. The generated state flake namespaces the input to its declaring module —
-top-level name `icedos-github_icedos_providers-<module>-<name>` — and consumers
-needing that top-level name in a string context (e.g. `follows`) compute it via
+Input-only provider modules, apart from a tips-only `outputs.nixosModules`. Each
+declares a single `inputs.<name>` flake input, which is then visible to every enabled
+module's `outputs.nixosModules` under the bare name `<name>`. The generated state
+flake namespaces the input to its declaring module — top-level name
+`icedos-github_icedos_providers-<module>-<name>` — and consumers needing that
+top-level name in a string context (e.g. `follows`) compute it via
 `icedosLib.moduleInputName { repo = "github:icedos/providers"; module = "<module>"; input = "<name>"; }`.
 Loading the upstream's own NixOS module / overlay is the consumer's decision.
 If a module ever gains a `patches` list, its inputs split into an unpatched
