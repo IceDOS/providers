@@ -63,7 +63,7 @@ the build delete `.local.toml` and restore the lock (or `git restore config/.sta
 - `jovian` — input-only. Exposes `inputs.jovian` (Jovian-NixOS, Steam Deck /
   SteamOS-style); do not load `jovian.nixosModules.default` here by default (it sets
   `allowUnfree = true` and SteamOS services). Consumers: `hardware#steamdeck`,
-  `apps#steam` (`os-session`, `sunshine-headless-session`), `kde#foreground-booster`.
+  `apps#steam` (`os-session`, `steam-headless`), `kde#foreground-booster`.
 - A module's declared input name is visible to all enabled modules under that name; the
   top-level flake input name is derived from the declaring module via
   `icedosLib.moduleInputName`. Two modules declaring the same input name collide in the
