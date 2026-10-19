@@ -8,6 +8,14 @@
     inputs.nixpkgs.follows = "nixpkgs";
   };
 
+  # Lib contributions get no pkgs or inputs, so callers pass both.
+  lib.jovian = rec {
+    # Applies the overlay directly; pkgs.extend would re-evaluate nixpkgs.
+    packages = { inputs, pkgs }: (inputs.jovian.overlays.default pkgs pkgs).jovianPackages;
+    getPackage = args: name: (packages args).${name};
+    getPackages = args: names: map (getPackage args) names;
+  };
+
   outputs.nixosModules =
     { ... }:
     [
